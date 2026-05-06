@@ -10,7 +10,7 @@ app.use(cors());
 // Json
 app.use(express.json());
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.xhm3y2q.mongodb.net/?appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -35,6 +35,19 @@ const run = async () => {
       const cursor = userCollection.find();
       const result = await cursor.toArray();
       res.send(result);
+    });
+    app.get("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = {
+        _id: new ObjectId(id),
+      };
+      const user = await userCollection.findOne(query);
+
+      if (!user) {
+        return res.status(404).send({ message: "User not found" });
+      }
+      console.log("user id", id);
+      res.send(user);
     });
 
     // Send a ping to confirm a successful connection
