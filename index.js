@@ -49,6 +49,19 @@ const run = async () => {
       console.log("user id", id);
       res.send(user);
     });
+    app.delete("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = {
+        _id: new ObjectId(id),
+      };
+      const deleteUser = await userCollection.deleteOne(query);
+
+      if (!deleteUser) {
+        return res.status(404).send({ message: "User not found" });
+      }
+      console.log("user id", id);
+      res.send(deleteUser);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
